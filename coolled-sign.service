@@ -1,0 +1,16 @@
+[Unit]
+Description=CoolLEDX Sign FastAPI Service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=tommy
+WorkingDirectory=/home/tommy/coolledx-driver
+ExecStart=/home/tommy/venvs/cool-led/bin/python3 /home/tommy/coolledx-driver/sign_api.py
+Restart=on-failure
+RestartSec=5
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

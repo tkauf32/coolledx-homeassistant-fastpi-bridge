@@ -373,3 +373,68 @@ FE 04 02 64 03 0F 07 FE 03 FC 6D
 
 ```
 # coolledx-homeassistant-fastpi-bridge
+I added `sign_manager.py` to manage the BLE connection from the pi to matrix display. This way, the commands upload quickly. The `tweak_sign.py` cli is slow. 
+
+the `sign_api.py` is a fast api server that gets hit by home assistant scripts. 
+
+animations is where the jt files live. 
+
+
+home assistant configuration file:
+
+```yaml
+  
+rest_command:
+  sign_off:
+    url: "http://2w.local:5000/off"
+    method: POST
+
+  sign_on:
+    url: "http://2w.local:5000/on"
+    method: POST
+
+  sign_play_animation:
+    url: "http://2w.local:5000/jt"
+    method: POST
+    content_type: "application/json"
+    payload: '{"name": "{{ animation_name }}"}'
+    
+input_select:
+  sign_animation:
+    name: Sign Animation
+    options:
+      - heart-wings
+      - cat-eyes
+      - beer
+      - middle-finger
+      - spacex
+      - jelly-fish
+      - among-us
+      - fire-test
+      - test
+```
+
+home assistant scripts.yaml file:
+
+```yaml
+sign_play_selected_animation:
+  alias: "Billboard: Play selected animation"
+  mode: single
+  sequence:
+    - service: rest_command.sign_play_animation
+      data:
+        animation_name: "{{ states('input_select.sign_animation') }}"
+
+sign_off:
+  alias: "Billboard: Off"
+  sequence:
+    - service: rest_command.sign_off
+
+sign_on:
+  alias: "Billboard: On (resume)"
+  sequence:
+    - service: rest_command.sign_on
+```
+
+
+home assistant dash b
